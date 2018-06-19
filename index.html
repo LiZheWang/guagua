@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>弹幕</title>
+    <script src="guagua/guagua.js"></script>
+    <link rel="stylesheet" href="guagua/style.css">
+</head>
+<body>
+
+
+<div style="display: none;">
+    <img src="http://yaseng.org/jquery.barrager.js/static/img/heisenberg.png" alt="">
+</div>
+
+
+
+<textarea id="message" placeholder="输入弹幕" rows="6" cols="40" ></textarea>
+<button id="send">发送</button>
+<button id="send1">显示重要的弹幕</button>
+
+<script>
+    var send = document.getElementById("send") ;
+    var send1 = document.getElementById("send1") ;
+    var gg = new Guagua() ;
+
+    setInterval(function(){
+        gg.appendMessage({
+            //imgUrl : 'http://yaseng.org/jquery.barrager.js/static/img/heisenberg.png' ,
+            background:'none' ,
+            message : "写死了" ,
+            id : new Date().getTime() ,
+            fontSize : '30px',
+            fontColor : "blue" ,
+            repet : 1,
+            duration : 20 ,
+            position : 'free'
+        }) ;
+    },500);
+
+
+    send.addEventListener("click",function(){
+        var message = document.getElementById("message").value ;
+        if( message ){
+            gg.appendMessage({
+                imgUrl : 'http://yaseng.org/jquery.barrager.js/static/img/heisenberg.png' ,
+                //background:'none' ,
+                message : message ,
+                fontColor : "green" ,
+                repet : 2 ,
+                position : 'free',
+                id : new Date().getTime() ,
+                fontSize : '30px' ,
+                //duration : Math.ceil(Math.random()*20 + 10) ,
+            }) ;
+            document.getElementById("message").value = "" ;
+        }
+    });
+
+    send1.addEventListener("click",function(){
+        var message = document.getElementById("message").value ;
+        if( message ){
+            gg.appendMessage({
+                imgUrl : 'http://yaseng.org/jquery.barrager.js/static/img/heisenberg.png' ,
+                message : message ,
+                id : new Date().getTime() ,
+                repet : 1 ,
+                position : 'top' ,
+                specialPosition : "bottom" ,
+            });
+            document.getElementById("message").value = "" ;
+        }
+    });
+
+</script>
+
+
+</body>
+</html>

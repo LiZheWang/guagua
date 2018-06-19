@@ -1,0 +1,41 @@
+.__guaguaBox{
+    position: fixed;
+    display: -wenkit-flex;
+    display: flex;
+
+    -webkit-align-items: center;
+    align-items: center;
+
+
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+
+
+    opacity: 0;
+}
+.__guaguaBox.show{
+    opacity: 1;
+}
+.__guaguaBox.special{
+    opacity: 0;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+    -webkit-transform: scale(0.6);
+    transform:  scale(0.6);
+    left: 50%;
+}
+.__guaguaBox.special.specialShow{
+    opacity: 1;
+    -webkit-transform:  scale(1);
+    transform:  scale(1);
+}
+
+
+.__guaguaBox > img{
+    display: none;
+    height: 100%;
+}
+.__guaguaBox .__con{
+    line-height: 1;
+    padding: 15px 15px 15px 10px;
+}
