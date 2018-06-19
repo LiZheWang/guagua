@@ -20,6 +20,7 @@
             this.ops = options.ops ;
             this.id = options.id ;
             this.config = options.config ;
+            this.queue = options.queue ;
 
             //开始的时间
             this.startTime = null ;
@@ -85,6 +86,7 @@
         destroy:function(){
             this.elem.parentNode.removeChild(this.elem) ;
             this.removeCatchItem();
+            this.queue._delTrajectory(this.id);
         },
 
         //根据id获取弹幕缓存的index
@@ -216,15 +218,6 @@
             this.start() ;
         },
 
-        //结束滚动
-        done : function(){
-
-        },
-        //暂停滚动
-        pause : function(){
-
-        }
-
     }
 
 
@@ -237,6 +230,7 @@
                 stageHeight : 200 , //舞台的高度，就是弹幕可以弹幕要显示的位置如 top的时候是 0-150 px
                 lines : 5 ,  //显示弹幕的行数
                 lineMarginTop : 10 ,  //弹道之间的间距
+                queueStep : 500 ,
                 durationConfig : {
                     fast : 10 ,
                     slow : 20 ,
@@ -248,10 +242,9 @@
 
             //弹道队列，每一行数据代表一个弹道，每个弹道里面存放最后一条弹幕
             this.tjs = [] ;
-            this._createTrajectory();
+            //this._createTrajectory();
+
             this._runTrajectoryQueue();
-
-
 
             return this ;
         },
@@ -279,7 +272,7 @@
 
         //往弹道队列中塞入一条弹幕  item：弹幕
         _addTrajectory : function(item){
-            var tj = this.getTrajectory() ;
+            var tj = this._getTrajectory() ;
             tj.items.push(item);
         },
         //删除一个弹道队列中的弹幕（弹幕显示完毕后，需要从弹道中删除）, 传入弹幕id
@@ -293,8 +286,7 @@
         },
         //执行弹道队列
         _runTrajectoryQueue : function(){
-            console.log( "队列开始执行了" );
-            setTimeout(this.runTrajectoryQueue , 500);
+            setTimeout(() => {this._runTrajectoryQueue();},this.ops.queueStep);
         },
 
         //创建弹幕
@@ -367,7 +359,9 @@
                     id : params.id ,
                     elem:item,
                     ops : params ,
-                    config : this.ops
+                    config : this.ops ,
+                    //guagua实例对象
+                    queue : this
                 }
                 return new Item(itemParams);
             }else{
