@@ -2,15 +2,11 @@
     position: fixed;
     display: -wenkit-flex;
     display: flex;
-
     -webkit-align-items: center;
     align-items: center;
-
-
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-
-
+    right: -100%;
     opacity: 0;
 }
 .__guaguaBox.show{
@@ -37,5 +33,5 @@
 }
 .__guaguaBox .__con{
     line-height: 1;
-    padding: 15px 15px 15px 10px;
+    padding: 10px;
 }
