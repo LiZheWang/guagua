@@ -1,10 +1,8 @@
 (function(win,doc){
-
+    //aa
     var Guagua = function(options){
         return this._init( options || {} );
     }
-
-
     if( !Array.prototype.find ){
         Array.prototype.find = function(fn){
             if( typeof fn == "function" ){
