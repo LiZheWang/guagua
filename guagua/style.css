@@ -27,9 +27,12 @@
 }
 
 
-.__guaguaBox > img{
+.__guaguaBox > .imgBox{
     display: none;
-    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-color: transparent;
 }
 .__guaguaBox .__con{
     line-height: 1;

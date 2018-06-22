@@ -4,6 +4,39 @@
         return this._init( options || {} );
     }
 
+
+    if( !Array.prototype.find ){
+        Array.prototype.find = function(fn){
+            if( typeof fn == "function" ){
+                for( var i=0;i<this.length;i++ ){
+                    var item = this[i];
+                    var res = fn(item,i,this) ;
+                    if( res ){
+                        return item ;
+                        break ;
+                    }
+                }
+            }
+            return null ;
+        }
+    }
+    if( !Array.prototype.findIndex ){
+        Array.prototype.findIndex = function(fn){
+            if( typeof fn == "function" ){
+                for( var i=0;i<this.length;i++ ){
+                    var item = this[i];
+                    var res = fn(item,i,this) ;
+                    if( res ){
+                        return i ;
+                        break ;
+                    }
+                }
+            }
+            return -1 ;
+        }
+    }
+
+
     function extend(src,dist){for( var prop in dist ){src[prop] = dist[prop] } return src ;}
 
 
@@ -30,6 +63,9 @@
             //弹幕的弹道
             this.tj = null ;
             this._createHtml();
+
+
+
             return this ;
         } ,
 
@@ -65,6 +101,9 @@
             this.setZindex() ;
             this.setBackground( this.ops.background );
             this.setRadiusAndImageSize() ;
+
+
+
         },
 
         //屏幕宽高
@@ -187,23 +226,27 @@
             if( index%3==0 ) { this.duration= this.duration+this.duration*0.04}
             if( index%4==0 ) { this.duration= this.duration+this.duration*0.14}
             if( index%5==0 ) { this.duration= this.duration+this.duration*0.06}
+
             this._clearTimer();
             this._show();
 
             var specialPosition = this.ops.specialPosition;
             var specialDistance = this.ops.specialDistance ;
 
+
+
+
+
             setTimeout(function(){
                 if( !specialPosition ){
                     //var transition = "transform "+this.duration+"s linear " + this.ops.delay + "s";
-                    var transition = "transform "+this.duration+"s linear ";
+                    var transition = "all "+this.duration+"s linear ";
                     this.elem.style.webkitTransition = transition ;
                     this.elem.style.transition = transition ;
                     var right = -this.moveWidth + "px" ;
                     var transform = 'translate3d('+right+',0,0)' ;
                     this.elem.style.webkitTransform = transform ;
                     this.elem.style.transform = transform ;
-
                     this.durationValue = this.duration*1000 ;
                 }else{
                     this.durationValue = this.ops.specialDuration*1000 ;
@@ -297,6 +340,8 @@
             //执行队列
             this._runTrajectoryQueue();
 
+
+
             return this ;
         },
 
@@ -316,22 +361,40 @@
         //获取弹道
         _getTrajectory : function(){
             //如果弹道内没有一个弹幕，优先塞入弹幕(优先在空闲的弹道塞入弹幕)
-            var find = this.tjs.find(function(item){ return item.items.length == []  }) ;
-            if( find  ) return find ;
+            //var find = this.tjs.find(function(item){ return item.items.length == []  }) ;
+            //if( find  ) return find ;
             //如果弹道内都有弹幕，则查看最后一个弹幕有没有完全显示出来，如果都显示出来了，就可以继续塞入弹幕
-            var result = null ;
-            this.tjs.forEach((item,index) => {
+            var result = null , dms = [] , lines = this.ops.lines;
+            this.tjs.forEach(function(item,index){
                 var items = item.items ;
                 var last = items[items.length-1] ;
-                //获取弹幕滚动了多久(获取移动时间)
-                var difftime = new Date().getTime() - last.startTime ;
-                //弹幕每微秒移动的距离
-                var s_val = last.moveWidth / last.durationValue ;
-                //每微秒速度 * 滚动时间 >=  弹幕的长度 + 弹幕间距 。  那么说明弹幕已经全部显示了，队列中可以添加新弹幕了
-                if( s_val * difftime  >= last.itemWidth + this.ops.dmMarginLeft ){
-                    result = item ;
+                if( last ){
+                    //获取弹幕滚动了多久(获取移动时间)
+                    var difftime = new Date().getTime() - last.startTime ;
+                    //弹幕每微秒移动的距离
+                    var s_val = last.moveWidth / last.durationValue ;
+                    //每微秒速度 * 滚动时间 >=  弹幕的长度 + 弹幕间距 。  那么说明弹幕已经全部显示了，队列中可以添加新弹幕了
+                    if( s_val * difftime  >= last.itemWidth + this.ops.dmMarginLeft ){
+                        dms.push(item);
+                    }
+                }else{
+                    dms.push(item);
                 }
-            });
+            }.bind(this));
+
+
+            //如果是0说明是刚开始，那么在所有lines弹道中随机抽取
+            /*
+            if( dms.length <= 0 ){
+                result = this.tjs[ Math.floor(Math.random() * lines) ];
+            }else{
+
+            }
+            */
+            if( dms.length ){
+                result = dms[ Math.floor(Math.random() * dms.length) ];
+            }
+
             return result ;
         },
 
@@ -346,19 +409,23 @@
         },
         //删除一个弹道队列中的弹幕（弹幕显示完毕后，需要从弹道中删除）, 传入弹幕id
         _delTrajectory : function(id){
-            this.tjs.forEach(item => {
-                var index = item.items.findIndex(dm => dm.id == id) ;
+            this.tjs.forEach(function(item){
+                var index = item.items.findIndex(function(dm){
+                    return dm.id == id ;
+                }) ;
                 if( index != -1 ){
                     item.items.splice(index,1);
                 }
-            });
+            }.bind(this));
         },
         //执行弹道队列
         _runTrajectoryQueue : function(){
             if( this.dms.length ){
                 this._addTrajectory(this.dms[0]);
             }
-            setTimeout(() => {this._runTrajectoryQueue();},this.queueStep);
+            setTimeout( function(){
+                this._runTrajectoryQueue();
+            }.bind(this),this.queueStep);
         },
 
         //弹幕队列 添加
@@ -371,7 +438,9 @@
         },
         //弹幕队列 删除
         _delDm : function(id){
-            var findIndex = this.dms.findIndex(item => item.id == id) ;
+            var findIndex = this.dms.findIndex(function(item){
+                return  item.id == id ;
+            }) ;
             if( findIndex != -1 ) this.dms.splice(findIndex,1) ;
         },
         //弹幕队列 获取要执行的弹幕

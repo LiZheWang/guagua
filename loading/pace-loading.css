@@ -1,0 +1,19 @@
+.pace{
+    top: 50%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    -webkit-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+}
+.pageCon {
+    -webkit-transition: opacity 0.5s;
+    transition: opacity 0.5s;
+    opacity: 0;
+    height: 100%;
+}
+.pace-done .pageCon{opacity: 1}
+.pace , .pace *{
+    -webkit-box-sizing:	content-box;
+    box-sizing:	content-box;
+}

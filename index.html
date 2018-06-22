@@ -1,42 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+    <script src="https://cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="https://cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-center-radar.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="loading/pace-loading.css">
+
+
     <meta charset="UTF-8">
     <title>弹幕</title>
+
+
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
     <script src="guagua/guagua.js"></script>
     <link rel="stylesheet" href="guagua/style.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.bootcss.com/Swiper/4.3.0/js/swiper.min.js"></script>
+    <link href="https://cdn.bootcss.com/Swiper/4.3.0/css/swiper.min.css" rel="stylesheet">
+
+
 </head>
 <body>
 
-
-<div style="display: none;">
-    <img src="http://yaseng.org/jquery.barrager.js/static/img/heisenberg.png" alt="">
+<div class="swiper-container comSlide pageCon" >
+    <div class="swiper-wrapper">
+        <div data-background="2.jpg" class="swiper-slide swiper-lazy">
+            <div class="swiper-lazy-preloader"></div>
+        </div>
+        <div data-background="5.jpg" class="swiper-slide swiper-lazy">
+            <div class="swiper-lazy-preloader"></div>
+        </div>
+        <div data-background="6.jpg" class="swiper-slide swiper-lazy">
+            <div class="swiper-lazy-preloader"></div>
+        </div>
+    </div>
 </div>
 
 
-
+<div class="qrcodeBox" >
+    <div id="qrBox"></div>
+    <p>扫描二维码即可发送弹幕</p>
+</div>
 
 
 <script>
+    $('#qrBox').qrcode({
+        text: "http://www.jq22.com"
+    });
+    var slide = new Swiper ('.swiper-container', {
+        //direction: 'vertical',
+        loop: true,
+        autoplay : 3000 ,
+        lazy: {
+            loadPrevNext: true,
+        },
+    })
+
 
     var gg = new Guagua({
-
+        position : 'top' ,
+        fontSize : '30px'
     });
-
     function getMessage(){
         return Math.random().toString(36).substr(2);
     }
     setInterval(function(){
         gg.appendMessage({
-            imgUrl : 'http://yaseng.org/jquery.barrager.js/static/img/heisenberg.png' ,
+            imgUrl : '5.jpg' ,
             //background:'none' ,
             message : getMessage() ,
             id : new Date().getTime() ,
-            fontSize : '30px',
-            fontColor : "blue" ,
+            fontColor : "#fff" ,
             repet : 1,
         }) ;
-    },500);
+    },200);
 
 
 </script>
